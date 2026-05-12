@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Voltage Monitor</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 50px;
+    }
+    h1 { font-size: 28px; }
+    #volt {
+      font-size: 40px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Live Voltage</h1>
+  <div id="volt">Loading...</div>
+
+  <script>
+    function loadData() {
+      fetch("https://api.thingspeak.com/channels/3379369/fields/1/last.json")
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("volt").innerHTML =
+            data.field1 + " V";
+        });
+    }
+
+    loadData();               // first time
+    setInterval(loadData, 5000); // every 5 sec
+  </script>
+
+</body>
+</html>
