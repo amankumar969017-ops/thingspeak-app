@@ -1,38 +1,132 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Live Voltage Monitor</title>
+  <title>IoT Login</title>
+
   <style>
     body {
-      font-family: Arial;
+      margin: 0;
+      font-family: 'Segoe UI';
+      background: #0f172a;
+      color: white;
       text-align: center;
-      margin-top: 50px;
     }
-    h1 { font-size: 28px; }
+
+    /* LOGIN BOX */
+    .login-box {
+      width: 300px;
+      margin: 120px auto;
+      padding: 25px;
+      background: #1e293b;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      width: 95%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #22c55e;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* DASHBOARD */
+    .dashboard {
+      display: none;
+      margin-top: 60px;
+    }
+
+    .card {
+      width: 280px;
+      margin: auto;
+      padding: 25px;
+      border-radius: 16px;
+      background: #1e293b;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+
     #volt {
-      font-size: 40px;
-      color: green;
+      font-size: 48px;
+      color: #22c55e;
+    }
+
+    .dot {
+      height: 10px;
+      width: 10px;
+      background: #22c55e;
+      border-radius: 50%;
+      display: inline-block;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0.3; }
     }
   </style>
 </head>
+
 <body>
 
-  <h1>Live Voltage</h1>
-  <div id="volt">Loading...</div>
+<!-- LOGIN PAGE -->
+<div class="login-box" id="loginBox">
+  <h2>🔐 Login</h2>
+  <input type="text" id="user" placeholder="Username">
+  <input type="password" id="pass" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
 
-  <script>
-    function loadData() {
-      fetch("https://api.thingspeak.com/channels/3379369/fields/1/last.json")
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById("volt").innerHTML =
-            data.field1 + " V";
-        });
-    }
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
 
-    loadData();               // first time
-    setInterval(loadData, 5000); // every 5 sec
-  </script>
+  <h1>⚡ Live Voltage</h1>
+
+  <div class="card">
+    <div id="volt">-- V</div>
+    <p><span class="dot"></span> Live Data</p>
+  </div>
+
+</div>
+
+<script>
+
+function login() {
+  let u = document.getElementById("user").value;
+  let p = document.getElementById("pass").value;
+
+  // simple demo login
+  if(u === "admin" && p === "1234") {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    loadData();
+    setInterval(loadData, 5000);
+  } else {
+    alert("Wrong Username or Password");
+  }
+}
+
+// ThingSpeak data fetch
+function loadData() {
+  fetch("https://api.thingspeak.com/channels/3379369/fields/1/last.json")
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("volt").innerHTML =
+        data.field1 + " V";
+    });
+}
+
+</script>
 
 </body>
 </html>
